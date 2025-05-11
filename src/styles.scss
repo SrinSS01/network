@@ -1,0 +1,30 @@
+@use '@angular/material' as mat;
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+	color-scheme: light dark;
+	@include mat.theme((
+		color: (
+			theme-type: light,
+			primary: mat.$azure-palette,
+			tertiary: mat.$blue-palette,
+		),
+		typography: Roboto,
+		density: 0,
+	));
+}
+
+html, body {
+	margin: 0;
+	padding: 0;
+	height: 100%;
+	@apply w-screen h-screen;
+}
+
+body {
+	font-family: Roboto, "Helvetica Neue", sans-serif;
+	padding: 0;
+}

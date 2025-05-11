@@ -1,0 +1,21 @@
+.network-container {
+	border: 1px solid #ccc;
+	background-color: #f9f9f9;
+}
+
+:host {
+	display: block;
+	@apply size-full relative;
+}
+
+.fab-button {
+	position: fixed !important;
+	bottom: 12px !important;
+	right: 12px !important;
+	z-index: 100 !important;
+
+	&.mat-mdc-fab {
+		background-color: var(--mdc-fab-container-color, var(--mdc-theme-primary, #6200ee));
+		color: var(--mdc-fab-icon-color, #fff);
+	}
+}

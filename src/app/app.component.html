@@ -1,20 +1,62 @@
 <div class="network-container size-full" #networkContainer></div>
 @if (contextMenuCoordinates()) {
 	<div class="fixed top-0 left-0 size-full bg-transparent" (click)="contextMenuCoordinates.set(null)">
-		<div class="size-fit bg-white rounded-md shadow-md absolute" [ngStyle]="{
+		<div class="size-fit bg-transparent backdrop-blur-2xl rounded-md shadow-md absolute flex flex-col" [ngStyle]="{
 			top: contextMenuCoordinates()!.y + 'px',
 			left: contextMenuCoordinates()!.x + 'px',
 			transform: 'translate(' + menuPosition().x + ',' + menuPosition().y + ')'
-		}" #contextMenu>
-			{{ selectedNode()?.label }}: {{ contextMenuContent()?.name }}
-			@for (property of contextMenuContent()?.properties; track $index) {
-				<div>
-					@if (property.name == '#type') {
+		}" #contextMenu (click)="$event.stopPropagation()">
+			<div class="flex items-center gap-2 border-gray-200 p-3"
+				 [class.border-b]="contextMenuContent()?.properties?.length !== 0">
+				<span class="font-[500] text-base text-nowrap max-w-[100ch] truncate min-w-[8ch]">{{ selectedNode()?.label }}</span>
+				<span
+					class="rounded-full outline outline-1 outline-gray-200 bg-gray-50 text-gray-700 text-xs p-1 px-2 font-medium flex items-center gap-1">
+					@if (isLiteral( contextMenuContent()?.name ?? "" )) {
+						@if (contextMenuContent()?.name === "xsd:boolean") {
+							<mat-icon class="[&_svg]:size-4 !flex items-center justify-center"
+									  [svgIcon]="getIcon(contextMenuContent()?.name ?? '', selectedNode()?.label ?? '')"/>
+						} @else {
+							<mat-icon class="[&_svg]:size-4 !flex items-center justify-center"
+									  [svgIcon]="getIcon(contextMenuContent()?.name ?? '')"/>
+						}
+						{{ contextMenuContent()!.name.split( ":" )?.pop() }}
 					} @else {
-						{{ property.name }}: {{ property.dataType }} = {{ property.value }}
+						{{ contextMenuContent()?.name }}
+					}
+				</span>
+				<mat-icon svgIcon="edit-svg" class="[&_svg]:size-4 !flex items-center justify-center text-gray-700 ml-auto hover:bg-gray-300 cursor-pointer rounded-md"/>
+			</div>
+			@if (contextMenuContent()?.properties?.length !== 0) {
+				<div class="p-3 flex flex-col gap-2">
+					@for (property of contextMenuContent()?.properties; track $index) {
+						<div class="flex items-center gap-1">
+							@if (property.name !== '#type') {
+								<span class="text-gray-900 text-sm font-medium">{{ property.name }}</span>
+								<span
+									[class]="'rounded-full outline outline-1 text-xs pr-2 pl-1 flex items-center gap-1 mr-1 font-medium ' + getOutlineColor(property.dataType)">
+									@if (property.dataType === "xsd:boolean") {
+										<mat-icon class="[&_svg]:size-4 !flex items-center justify-center"
+												  [svgIcon]="getIcon(property.dataType, property.value)"/>
+									} @else {
+										<mat-icon class="[&_svg]:size-4 !flex items-center justify-center"
+												  [svgIcon]="getIcon(property.dataType)"/>
+									}
+									@if (property.dataType.startsWith( "xsd:" )) {
+										{{ property.dataType.split( ":" ).pop() }}
+									} @else {
+										{{ property.dataType }}
+									}
+							</span>
+								<span
+									[class]="'text-sm ' + getValueColour(property.dataType)">{{ property.value }}</span>
+							}
+						</div>
 					}
 				</div>
 			}
 		</div>
 	</div>
 }
+<button mat-fab class="fab-button" (click)="convertGraphToTTL()">
+	<mat-icon svgIcon="convert-svg"/>
+</button>

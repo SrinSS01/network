@@ -5,5 +5,5 @@
 
 :host {
 	display: block;
-	@apply size-full;
+	@apply size-full relative;
 }
